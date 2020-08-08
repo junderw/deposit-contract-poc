@@ -1,0 +1,38 @@
+{
+  "name": "deposit-contract-poc",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A proof of concept for a deposit contract for merchants and exchanges",
+  "scripts": {
+    "coverage": "npm run coverage:run && npm run coverage:check",
+    "coverage:check": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
+    "coverage:run": "truffle run coverage",
+    "format": "npm run prettier -- --write",
+    "format:ci": "npm run prettier -- --check",
+    "ganache:run": "(ganache-cli >/dev/null 2>&1 &)",
+    "ganache:stop": "PID=$(ps aux | grep 'node_modules/.bin/ganache-cl[i]' | sed 's/\\s\\s*/ /g' | cut -d' ' -f2) && if [ ! -z $PID ]; then kill $PID; fi",
+    "lint": "solhint -c ./.solhint.json './contracts/**/*.sol'",
+    "prettier": "prettier '{,!(coverage|example)/**/}*.{js,ts,sol}' --bracket-spacing --single-quote --trailing-comma=all",
+    "test": "npm run ganache:run && truffle test && npm run ganache:stop"
+  },
+  "keywords": [
+    "ethereum",
+    "EIP",
+    "deposit",
+    "exchange",
+    "merchant"
+  ],
+  "author": "Jonathan Underwood",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "ganache-cli": "^6.10.1",
+    "mocha": "^8.1.1",
+    "prettier": "^2.0.5",
+    "prettier-plugin-solidity": "^1.0.0-alpha.55",
+    "solc": "^0.7.0",
+    "solhint": "^3.1.0",
+    "solidity-coverage": "^0.7.9",
+    "truffle": "^5.1.39"
+  }
+}
