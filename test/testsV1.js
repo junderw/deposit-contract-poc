@@ -9,9 +9,10 @@ contract('DepositsV1', async (accounts) => {
   });
   describe('Events', async () => {
     it('should emit an event', async () => {
-      await deposit.deposit('0x0102030405060708', {
+      const tx = await deposit.deposit('0x0102030405060708', {
         value: '1000000000000000000',
       });
+      logger(`    ********** Gas used for deposit: ${tx.receipt.gasUsed}`);
 
       const results = await deposit.getPastEvents('Deposit', {
         fromBlock: 0,
@@ -53,3 +54,8 @@ contract('DepositsV1', async (accounts) => {
     });
   });
 });
+
+// Don't report gas if running coverage
+// solidity-coverage gas costs are irregular
+const IS_COVERAGE = process.env.npm_lifecycle_script === 'truffle run coverage';
+const logger = IS_COVERAGE ? () => {} : console.log;

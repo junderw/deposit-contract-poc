@@ -40,9 +40,10 @@ contract('DepositsV2', async (accounts) => {
   });
   describe('Events', async () => {
     it('should emit an event', async () => {
-      await deposit.deposit(testId, {
+      const tx = await deposit.deposit(testId, {
         value: '1000000000000000000',
       });
+      logger(`    ********** Gas used for deposit: ${tx.receipt.gasUsed}`);
 
       const results = await deposit.getPastEvents('Deposit', {
         fromBlock: 0,
@@ -130,3 +131,8 @@ const ADDRESS_FIXTURES = [
     newAddress: '0x492cdf7701d3ebeaab63b4c7c0e66947c3d202476808043984183dbe',
   },
 ];
+
+// Don't report gas if running coverage
+// solidity-coverage gas costs are irregular
+const IS_COVERAGE = process.env.npm_lifecycle_script === 'truffle run coverage';
+const logger = IS_COVERAGE ? () => {} : console.log;
