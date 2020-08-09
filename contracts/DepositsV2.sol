@@ -14,15 +14,21 @@ contract DepositsV2 is DepositEIP2 {
 
     event Deposit(bytes8 id, uint256 amount, address forwardTo);
 
-    function deposit(bytes8 id) external override payable returns (bool) {
+    function checksumMatch(bytes8 id) internal view returns (bool) {
         bytes32 chkhash = keccak256(
             abi.encodePacked(address(this), bytes5(id))
         );
         bytes3 chkh = bytes3(chkhash);
         bytes3 chki = bytes3(bytes8(uint64(id) << 40));
-        require(chkh == chki, 'checksum mismatch');
+        return chkh == chki;
+    }
+
+    function deposit(bytes8 id) external override payable returns (bool) {
+        require(checksumMatch(id), 'checksum mismatch');
+
         (bool result, ) = forwardAddress.call{ value: msg.value }('');
         require(result, 'Could not forward funds');
+
         emit Deposit(id, msg.value, forwardAddress);
         return true;
     }
