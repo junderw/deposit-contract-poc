@@ -28,6 +28,10 @@ contract('Deposits', async (accounts) => {
   let deposit;
   let testId;
   const RECEIVER = accounts[8];
+  before(async () => {
+    // log gasUsed
+    await logDeployGas();
+  });
   beforeEach(async () => {
     ({ deposit, testId } = await deploy(RECEIVER));
   });
@@ -51,10 +55,9 @@ contract('Deposits', async (accounts) => {
       });
       assert.equal(results.length, 1);
 
-      const { id, amount, forwardTo } = results[0].returnValues;
+      const { id, amount } = results[0].returnValues;
       assert.equal(id, testId);
       assert.equal(amount.toString(10), '1000000000000000000');
-      assert.equal(forwardTo, RECEIVER);
     });
   });
 
@@ -102,6 +105,12 @@ const deploy = async (addr) => {
   const newAddress = generateAddress(deposit.address, '0x0102030405');
   // id is the last 8 bytes of the new address.
   return { deposit, testId: '0x' + newAddress.slice(-16) };
+};
+
+const logDeployGas = async () => {
+  const deposit = await Deposits.new(ADDRESS_FIXTURES[0].address);
+  const receipt = await web3.eth.getTransactionReceipt(deposit.transactionHash);
+  logger(`    ************ Gas used in deploy: ${receipt.gasUsed}`);
 };
 
 const ADDRESS_FIXTURES = [

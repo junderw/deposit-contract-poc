@@ -12,7 +12,7 @@ contract Deposits is DepositEIP {
         forwardAddress = forwardAddr;
     }
 
-    event Deposit(bytes8 id, uint256 amount, address forwardTo);
+    event Deposit(bytes8 id, uint256 amount);
 
     function checksumMatch(bytes8 id) internal view returns (bool) {
         bytes32 chkhash = keccak256(
@@ -29,7 +29,7 @@ contract Deposits is DepositEIP {
         (bool result, ) = forwardAddress.call{ value: msg.value }('');
         require(result, 'Could not forward funds');
 
-        emit Deposit(id, msg.value, forwardAddress);
+        emit Deposit(id, msg.value);
         return true;
     }
 }
