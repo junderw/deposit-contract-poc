@@ -31,14 +31,22 @@ DepositV2 has a contract that validates the checksum itself and reverts if incor
 
 ## Part 2: The Interface
 
-A contract that follows this ERC MUST have a function signature that follows.
-It MUST NOT have any other payable functions or fallbacks.
+A contract that follows this ERC:
+
+- `The contract` MUST revert if sent a transaction where `msg.data` is null (A pure value transaction).
+- `The contract` MUST have a function a deposit function as follows:
 
 ```solidity
 interface DepositEIP {
   function deposit(bytes8 id) external payable returns (bool);
 }
 ```
+
+- `deposit(bytes8)` MUST return `false` when the contract needs to keep the value, but signal to the depositor that the deposit (in terms of the parent application) itself has not yet succeeded. (This can be used for partial payment, ie. the invoice is for 5 ETH, sending 3 ETH returns false, but sending a second tx with 2 ETH will return true.)
+- `deposit(bytes8)` MUST revert if the deposit somehow failed and the contract does not need to keep the value sent.
+- `deposit(bytes8)` MUST return `true` if the value will be kept and the payment is logically considered complete by the parent application (exchange/merchant).
+- `deposit(bytes8)` SHOULD check the checksum contained within the 8 byte id. (See DepositV2)
+- `deposit(bytes8)` SHOULD return any excess value received if the deposit id is a one-time-use invoice that has a set value and the value received is higher than the set value. However, this SHOULD NOT be done by sending back to `msg.sender` directly, but rather should be noted in the parent application and the depositor should be contacted out-of-band to the best of the application manager's ability.
 
 ## Part 3: Ease of support
 
