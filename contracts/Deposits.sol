@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.6.12;
 
-interface DepositEIP2 {
+interface DepositEIP {
     function deposit(bytes8 id) external payable returns (bool);
 }
 
-contract DepositsV2 is DepositEIP2 {
+contract Deposits is DepositEIP {
     address payable public immutable forwardAddress;
 
     constructor(address payable forwardAddr) public {

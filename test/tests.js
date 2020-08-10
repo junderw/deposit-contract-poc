@@ -1,5 +1,5 @@
 const assert = require('assert');
-const DepositsV2 = artifacts.require('DepositsV2');
+const Deposits = artifacts.require('Deposits');
 
 /**
  * Converts an address and a 5 byte id to a deposit address. The format of the
@@ -24,7 +24,7 @@ const generateAddress = (baseAddress, id5Bytes) => {
   return ret + myHash.slice(2, 8); // first 3 bytes
 };
 
-contract('DepositsV2', async (accounts) => {
+contract('Deposits', async (accounts) => {
   let deposit;
   let testId;
   const RECEIVER = accounts[8];
@@ -98,7 +98,7 @@ contract('DepositsV2', async (accounts) => {
 });
 
 const deploy = async (addr) => {
-  const deposit = await DepositsV2.new(addr);
+  const deposit = await Deposits.new(addr);
   const newAddress = generateAddress(deposit.address, '0x0102030405');
   // id is the last 8 bytes of the new address.
   return { deposit, testId: '0x' + newAddress.slice(-16) };
